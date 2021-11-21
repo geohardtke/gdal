@@ -50,7 +50,7 @@ jobs:
         uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-targets ${{ matrix.features }} -- -D warnings
+          args: --all-targets ${{ matrix.features }} 
       - name: Build
         uses: actions-rs/cargo@v1
         with:
