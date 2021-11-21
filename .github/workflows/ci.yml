@@ -27,7 +27,7 @@ jobs:
       - name: Install build deps
         run: |
           apt-get update -y
-          apt-get install build-essential -y
+          apt-get install build-essential pkg-config -y
       - name: Setup building
         run: |
           export CC="clang-9"
