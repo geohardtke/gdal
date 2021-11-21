@@ -26,7 +26,7 @@ jobs:
       - name: Install build deps
         run: |
           apt-get update -y
-          apt-get install build-essential pkg-config -y
+          apt-get install build-essential pkg-config libclang-dev -y
       - name: Setup building
         run: |
           export CC="clang-9"
@@ -78,7 +78,7 @@ jobs:
       - name: Install build deps
         run: |
           apt-get update -y
-          apt-get install build-essential pkg-config -y
+          apt-get install build-essential pkg-config libclang-dev -y
       - name: Setup building
         run: |
           export CC="clang-9"
