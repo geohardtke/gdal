@@ -26,8 +26,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Install build deps
         run: |
-          apt-get update
-          apt-get install build-essential
+          apt-get update -y
+          apt-get install build-essential -y
       - name: Setup building
         run: |
           export CC="clang-9"
