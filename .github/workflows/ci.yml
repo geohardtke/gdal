@@ -13,7 +13,7 @@ jobs:
 
   gdal_34:
     name: "ci gdal-34"
-    runs-on: "ubuntu-20.04"
+    runs-on: ubuntu-latest
     container:
       image: osgeo/gdal:ubuntu-normal-3.4.0
 
