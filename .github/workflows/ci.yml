@@ -32,6 +32,17 @@ jobs:
         run: |
           export CC="clang-9"
           export CXX="clang++-9"
+      
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install latest nightly
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: nightly
+            override: true
+            components: rustfmt, clippy
+
+
       - name: Check with Rustfmt
         uses: actions-rs/cargo@v1
         with:
