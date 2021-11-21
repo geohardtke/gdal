@@ -3,7 +3,7 @@ use crate::metadata::Metadata;
 use crate::raster::rasterband::ResampleAlg;
 use crate::raster::{ByteBuffer, ColorInterpretation, RasterCreationOption};
 use crate::vsi::unlink_mem_file;
-use crate::Driver;
+use crate::{cpl, DatasetOptions, Driver, GdalOpenFlags};
 use gdal_sys::GDALDataType;
 use std::path::Path;
 
@@ -692,4 +692,113 @@ fn test_rasterize() {
         values.data,
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,]
     );
+}
+
+#[test]
+#[cfg(all(major_ge_3, minor_ge_1))]
+fn test_root_group_name() {
+    let options = DatasetOptions {
+        open_flags: GdalOpenFlags::GDAL_OF_MULTIDIM_RASTER,
+        allowed_drivers: None,
+        open_options: None,
+        sibling_files: None,
+    };
+    let dataset = Dataset::open_ex(fixture!("byte_no_cf.nc"), options).unwrap();
+    let root_group = dataset.root_group().unwrap();
+    let root_group_name = root_group.name();
+    assert_eq!(root_group_name, "/");
+}
+#[test]
+#[cfg(all(major_ge_3, minor_ge_1))]
+fn test_array_names() {
+    let dataset_options = DatasetOptions {
+        open_flags: GdalOpenFlags::GDAL_OF_MULTIDIM_RASTER,
+        allowed_drivers: None,
+        open_options: None,
+        sibling_files: None,
+    };
+    let dataset = Dataset::open_ex(fixture!("byte_no_cf.nc"), dataset_options).unwrap();
+    let root_group = dataset.root_group().unwrap();
+    let options = cpl::CslStringList::new(); //Driver specific options determining how groups should be retrieved. Pass nullptr for default behavior.
+    let array_names = root_group.array_names(options);
+    assert_eq!(array_names, vec!["Band1".to_string()])
+}
+
+#[test]
+#[cfg(all(major_ge_3, minor_ge_1))]
+fn test_n_dimension() {
+    let dataset_options = DatasetOptions {
+        open_flags: GdalOpenFlags::GDAL_OF_MULTIDIM_RASTER,
+        allowed_drivers: None,
+        open_options: None,
+        sibling_files: None,
+    };
+    let dataset = Dataset::open_ex(fixture!("byte_no_cf.nc"), dataset_options).unwrap();
+    let root_group = dataset.root_group().unwrap();
+    let array_name = "Band1".to_string();
+    let options = cpl::CslStringList::new(); //Driver specific options determining how the array should be opened. Pass nullptr for default behavior.
+    let md_array = root_group.md_array(array_name, options);
+    let n_dimension = md_array.n_dimension();
+    assert_eq!(2, n_dimension);
+}
+
+#[test]
+#[cfg(all(major_ge_3, minor_ge_1))]
+fn test_n_elements() {
+    let dataset_options = DatasetOptions {
+        open_flags: GdalOpenFlags::GDAL_OF_MULTIDIM_RASTER,
+        allowed_drivers: None,
+        open_options: None,
+        sibling_files: None,
+    };
+    let dataset = Dataset::open_ex(fixture!("byte_no_cf.nc"), dataset_options).unwrap();
+    let root_group = dataset.root_group().unwrap();
+    let array_name = "Band1".to_string();
+    let options = cpl::CslStringList::new(); //Driver specific options determining how the array should be opened. Pass nullptr for default behavior.
+    let md_array = root_group.md_array(array_name, options);
+    let n_elements = md_array.n_elements();
+    assert_eq!(400, n_elements);
+}
+
+#[test]
+#[cfg(all(major_ge_3, minor_ge_1))]
+fn test_dimension_name() {
+    let dataset_options = DatasetOptions {
+        open_flags: GdalOpenFlags::GDAL_OF_MULTIDIM_RASTER,
+        allowed_drivers: None,
+        open_options: None,
+        sibling_files: None,
+    };
+    let dataset = Dataset::open_ex(fixture!("byte_no_cf.nc"), dataset_options).unwrap();
+    let root_group = dataset.root_group().unwrap();
+    let array_name = "Band1".to_string();
+    let options = cpl::CslStringList::new(); //Driver specific options determining how the array should be opened. Pass nullptr for default behavior.
+    let md_array = root_group.md_array(array_name, options);
+    let dimensions = md_array.get_dimensions().unwrap();
+    let mut dimension_names = Vec::new();
+    for dimension in dimensions {
+        dimension_names.push(dimension.name());
+    }
+    assert_eq!(dimension_names, vec!["y".to_string(), "x".to_string()])
+}
+#[test]
+#[cfg(all(major_ge_3, minor_ge_1))]
+fn test_dimension_size() {
+    let dataset_options = DatasetOptions {
+        open_flags: GdalOpenFlags::GDAL_OF_MULTIDIM_RASTER,
+        allowed_drivers: None,
+        open_options: None,
+        sibling_files: None,
+    };
+    let dataset = Dataset::open_ex(fixture!("byte_no_cf.nc"), dataset_options).unwrap();
+    let root_group = dataset.root_group().unwrap();
+    let array_name = "Band1".to_string();
+    let options = cpl::CslStringList::new(); //Driver specific options determining how the array should be opened. Pass nullptr for default behavior.
+    let md_array = root_group.md_array(array_name, options);
+    let dimensions = md_array.get_dimensions().unwrap();
+    let mut dimensions_size = Vec::new();
+    for dimension in dimensions {
+        dimensions_size.push(dimension.size());
+    }
+    assert_eq!(dimensions_size, vec![20, 20])
 }
