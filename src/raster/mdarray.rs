@@ -16,6 +16,7 @@ use std::ffi::CString;
 use ndarray::{ArrayD, IxDyn};
 use std::fmt::Debug;
 
+#[cfg(all(major_ge_3,minor_ge_1))]
 #[cfg(test)]
 mod tests {
     use crate::{cpl, Dataset, DatasetOptions, GdalOpenFlags};
