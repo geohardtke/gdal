@@ -11,10 +11,12 @@ on:
 
 jobs:
 
-  ubuntu_20_04:
-    name: "ci ubuntu-20.04"
+  gdal_34:
+    name: "ci gdal-34"
     runs-on: "ubuntu-20.04"
-    
+    container:
+      image: osgeo/gdal:alpine-normal-3.4.0
+
     strategy:
       matrix:
         features: ["", "--all-features"]
@@ -22,13 +24,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Install GDAL
+      - name: Install build deps
         run: |
           sudo apt-get update
-          sudo apt-get install libgdal-dev gdal-bin build-essential
-          export C_INCLUDE_PATH=/usr/include/gdal:$C_INCLUDE_PATH
-          export CPLUS_INCLUDE_PATH=/usr/include/gdal:$CPLUS_INCLUDE_PATH
-          sudo ldconfig
+          sudo apt-get instal build-essential
       - name: Setup building
         run: |
           export CC="clang-9"
