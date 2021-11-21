@@ -15,7 +15,7 @@ jobs:
     name: "ci gdal-34"
     runs-on: "ubuntu-20.04"
     container:
-      image: osgeo/gdal:alpine-normal-3.4.0
+      image: osgeo/gdal:ubuntu-normal-3.4.0
 
     strategy:
       matrix:
